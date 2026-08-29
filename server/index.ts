@@ -337,4 +337,7 @@ function clientSafeError(status: number): { error: string; message: string } {
   process.on('unhandledRejection', (reason) => {
     logger.error(LogContext.SERVER, 'Unhandled rejection', reason);
   });
-})();
+})().catch((err) => {
+  logger.error(LogContext.SERVER, 'Fatal error during startup', err);
+  process.exit(1);
+});

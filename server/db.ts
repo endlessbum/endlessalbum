@@ -72,7 +72,13 @@ function buildSslConfig(): boolean | ConnectionOptions {
 
 if (databaseUrl) {
   logger.info(LogContext.DB, 'Creating PostgreSQL connection pool');
-  pool = new Pool({ connectionString: databaseUrl, ssl: buildSslConfig() });
+  pool = new Pool({
+    connectionString: databaseUrl,
+    ssl: buildSslConfig(),
+    connectionTimeoutMillis: 10_000,
+    query_timeout: 30_000,
+    statement_timeout: 30_000,
+  });
   db = drizzle({ client: pool, schema });
   logger.info(LogContext.DB, 'PostgreSQL connection pool created');
 } else {

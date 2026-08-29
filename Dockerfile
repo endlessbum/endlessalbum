@@ -34,6 +34,8 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder /app/dist ./dist
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+# SQL-миграции схемы БД (применяются автоматически при старте сервера)
+COPY --from=builder /app/migrations ./migrations
 # Папка для загружаемых файлов (uploads)
 COPY --from=builder /app/public ./public
 

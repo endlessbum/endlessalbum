@@ -15,6 +15,7 @@ import { pool } from "./db";
 import { csrfProtection } from "./csrf";
 import { logger, LogContext } from "./logger";
 import { setupAuth } from "./auth";
+import { runMigrations } from "./migrate";
 
 const SHUTDOWN_TIMEOUT_MS = 30_000;
 let isShuttingDown = false;
@@ -184,6 +185,10 @@ function clientSafeError(status: number): { error: string; message: string } {
 }
 
 (async () => {
+  // Схему БД накатываем до открытия порта: на Render (Docker) отдельного шага
+  // db:push нет, иначе таблиц не существует и все запросы к БД падают с 500.
+  await runMigrations();
+
   const server = await registerRoutes(app);
 
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {

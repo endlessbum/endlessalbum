@@ -69,7 +69,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  const distPath = path.resolve(import.meta.dirname, "..", "dist", "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
@@ -77,7 +77,25 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  app.use(express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      // Explicitly set Content-Type based on file extension
+      const ext = path.extname(filePath).toLowerCase();
+      if (ext === '.css') {
+        res.setHeader('Content-Type', 'text/css; charset=utf-8');
+      } else if (ext === '.js' || ext === '.mjs') {
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      } else if (ext === '.json') {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      } else if (ext === '.svg') {
+        res.setHeader('Content-Type', 'image/svg+xml');
+      } else if (ext === '.woff2') {
+        res.setHeader('Content-Type', 'font/woff2');
+      } else if (ext === '.woff') {
+        res.setHeader('Content-Type', 'font/woff');
+      }
+    }
+  }));
 
   app.use("*", (req, res) => {
     if (req.path.startsWith("/api/")) {

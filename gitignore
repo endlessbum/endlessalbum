@@ -1,0 +1,19 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+cookies.txt
+/.vscode/*.log
+.env
+.env.*.local
+.env.local
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+
+# Test run artifacts
+playwright-report
+test-results
+public/uploads

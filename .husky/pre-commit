@@ -1,0 +1,12 @@
+
+# Run lint-staged first for fast feedback on staged files
+npx lint-staged || exit 1
+
+# Type check whole project (fast noEmit)
+npm run -s check || exit 1
+
+# Strict lint for whole project (ensure zero warnings)
+npm run -s lint:strict || exit 1
+
+# Run only changed tests when possible; fallback to full if none detected
+npx vitest --changed --reporter=dot || npx vitest run --reporter=dot

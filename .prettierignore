@@ -1,0 +1,15 @@
+dist
+build
+node_modules
+public/uploads
+client/dist
+dist/
+build/
+node_modules/
+public/
+client/dist/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp

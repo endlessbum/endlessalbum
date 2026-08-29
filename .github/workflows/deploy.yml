@@ -1,0 +1,26 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    # Запускается только если CI прошёл успешно (защита от деплоя сломанного кода).
+    # Пропускаем job, если secret RENDER_DEPLOY_HOOK не задан (роль берёт на себя
+    # авто-деплой Render: autoDeploy: true).
+    if: ${{ secrets.RENDER_DEPLOY_HOOK != '' }}
+    environment: production
+
+    steps:
+      - name: Trigger Render Deploy
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          curl -fsS \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            "$RENDER_DEPLOY_HOOK"

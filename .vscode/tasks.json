@@ -1,0 +1,143 @@
+{
+	// Задачи для автоматизации разработки и сборки (Windows PowerShell)
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Dev server (watch)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "dev"],
+			"isBackground": true,
+			// Ждём появления строки лога сервера, затем считаем задачу запущенной
+			"problemMatcher": {
+				"owner": "custom",
+				"fileLocation": "absolute",
+				// Пустой паттерн (не фиксируем ошибки), только фоновые маркеры запуска/готовности
+				"pattern": { "regexp": "^$" },
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": ".",
+					"endsPattern": "serving on port"
+				}
+			},
+			"detail": "Запускает сервер разработки с Vite (HMR)"
+		},
+		{
+					"label": "E2E (Playwright)",
+					"type": "shell",
+					"command": "pwsh",
+					"args": [
+						"-NoLogo",
+						"-NoProfile",
+						"-Command",
+						"$env:PLAYWRIGHT_BASE_URL='http://127.0.0.1:5000'; npm run -s e2e"
+					],
+					"group": "test",
+					"problemMatcher": []
+		},
+		{
+			"label": "Build",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "build"],
+			"group": "build",
+			"problemMatcher": ["$tsc"],
+			"detail": "Собирает клиент и сервер"
+		},
+		{
+			"label": "Start (production)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "start"],
+			"detail": "Старт продакшн-сборки"
+		},
+		{
+			"label": "TypeScript check",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "check"],
+			"problemMatcher": ["$tsc"],
+			"group": "build",
+			"detail": "Проверка типов без эмита"
+		},
+		{
+			"label": "TypeScript check (node)",
+			"type": "shell",
+			"command": "node",
+			"args": ["./node_modules/typescript/bin/tsc"],
+			"problemMatcher": ["$tsc"],
+			"group": "build",
+			"detail": "Проверка типов через локальный tsc (устойчивее в Windows)"
+		},
+		{
+			"label": "ESLint (strict)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "lint:strict"],
+			"problemMatcher": ["$eslint-stylish"],
+			"detail": "Строгая проверка линтером без предупреждений"
+		},
+		{
+			"label": "Smoke (MemStorage)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "smoke"],
+			"detail": "Быстрая валидация in-memory хранилища"
+		},
+		{
+			"label": "DB push (Drizzle)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "db:push"],
+			"detail": "Применяет схему к БД"
+		},
+		{
+			"label": "Env check",
+			"type": "shell",
+			"command": "node",
+			"args": ["test-env.js"],
+			"detail": "Печатает основные переменные окружения"
+		},
+		{
+			"label": "Develop (dev + types)",
+			"dependsOrder": "parallel",
+			"dependsOn": ["Dev server (watch)", "TypeScript check"]
+		},
+		{
+			"label": "Develop (dev + types, node)",
+			"dependsOrder": "parallel",
+			"dependsOn": ["Dev server (watch)", "TypeScript check (node)"]
+		},
+		{
+			"label": "Verify (tsc+lint+smoke)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "verify"],
+			"detail": "Полный прогон проверок: TypeScript, ESLint strict, Smoke"
+		},
+		{
+			"label": "Health check (GET /api/health)",
+			"type": "shell",
+			"command": "node",
+			"args": ["-e", "fetch(process.env.APP_ORIGIN||'http://127.0.0.1:5000/api/health').then(r=>r.json()).then(j=>console.warn(JSON.stringify(j))).catch(e=>{console.error(e); process.exit(1);})"],
+			"detail": "Проверка статуса API без аутентификации"
+		},
+		// --- Добавлено: стабильные задачи для Playwright через node CLI ---
+		{
+			"label": "E2E (Playwright, node)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "e2e:node"],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "E2E UI (Playwright, node)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "-s", "e2e:ui:node"],
+			"group": "test",
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: album
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      # Генерируется автоматически при первом деплое
+      - key: SESSION_SECRET
+        generateValue: true
+      # Устанавливается из Render Postgres (Internal Connection URL)
+      - key: DATABASE_URL
+        sync: false
+      # TLS-сертификат CA базы данных (PEM). Проверка сертификата включена по
+      # умолчанию; для Render Postgres скачайте CA-сертификат и вставьте сюда,
+      # иначе подключение будет отклонено. Как временную меру можно выставить
+      # DATABASE_SSL_REJECT_UNAUTHORIZED=false (небезопасно).
+      - key: DATABASE_CA_CERT
+        sync: false
+      # Публичный origin приложения (для cookies/callbacks)
+      - key: APP_ORIGIN
+        sync: false
+      # Базовая аутентификация (опционально)
+      - key: BASIC_AUTH_USER
+        sync: false
+      - key: BASIC_AUTH_PASS
+        sync: false
+      - key: BASIC_AUTH_REALM
+        value: "Private"
+      # Google Cloud Storage (опционально, если настроен)
+      - key: GCS_BUCKET
+        sync: false
+      - key: GCS_KEYFILE
+        sync: false
+      # Отключить rate limiting если нужно (1 = выключен)
+      - key: RATE_LIMIT_DISABLED
+        value: "0"
+    disk:
+      name: uploads
+      mountPath: /app/public/uploads
+      sizeGB: 1

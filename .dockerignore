@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+*.md
+.env
+.env.*
+!.env.example
+.e2e
+tests
+playwright-report
+coverage
+.vscode
+.github
+.husky
+*.log

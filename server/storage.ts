@@ -5,7 +5,7 @@ import { randomUUID, randomBytes } from "crypto";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import ConnectPgSimple from "connect-pg-simple";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { logger, LogContext } from "./logger";
 import { eq, and, desc, asc, lte, count, sql, or, isNull, gt, lt } from "drizzle-orm";
 
@@ -565,8 +565,16 @@ export class PgStorage implements IStorage {
     }
 
     try {
+      if (!pool) {
+        throw new Error("PostgreSQL connection pool is not initialized for the session store");
+      }
+      // Используем тот же pg.Pool, что и Drizzle (включая TLS-конфигурацию из
+      // db.ts). Раньше здесь передавался conString, из-за чего connect-pg-simple
+      // создавал собственный пул БЕЗ TLS — на внешнем URL БД (Render Postgres,
+      // Supabase) соединение отклонялось, таблица "session" не создавалась и
+      // каждый вход/регистрация падали с 500 (ошибка при req.login/save сессии).
       this.sessionStore = new PgSession({
-        conString: process.env.DATABASE_URL,
+        pool,
         tableName: 'session',
         createTableIfMissing: true,
       });

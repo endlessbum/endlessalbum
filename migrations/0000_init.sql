@@ -1,4 +1,4 @@
-CREATE TABLE "comments" (
+CREATE TABLE IF NOT EXISTS "comments" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"memory_id" varchar NOT NULL,
 	"author_id" varchar NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE "comments" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "counters" (
+CREATE TABLE IF NOT EXISTS "counters" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"couple_id" varchar NOT NULL,
 	"name" text NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE "counters" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "couples" (
+CREATE TABLE IF NOT EXISTS "couples" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"main_admin_id" varchar NOT NULL,
 	"co_admin_id" varchar,
@@ -26,7 +26,7 @@ CREATE TABLE "couples" (
 	CONSTRAINT "couples_invite_code_unique" UNIQUE("invite_code")
 );
 --> statement-breakpoint
-CREATE TABLE "games" (
+CREATE TABLE IF NOT EXISTS "games" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"couple_id" varchar NOT NULL,
 	"type" text NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE "games" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "memories" (
+CREATE TABLE IF NOT EXISTS "memories" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"couple_id" varchar NOT NULL,
 	"author_id" varchar NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE "memories" (
 	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "messages" (
+CREATE TABLE IF NOT EXISTS "messages" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"couple_id" varchar NOT NULL,
 	"sender_id" varchar NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE "messages" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" varchar PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"username" text NOT NULL,
 	"email" text NOT NULL,
